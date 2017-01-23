@@ -1,6 +1,6 @@
 {
-  "name": "ucb2hockeyapp",
-  "version": "1.0.0",
+  "name": "unity-cloud-build-to-hockeyapp",
+  "version": "1.1.0",
   "description": "Receives a payload from Unity Cloud Build webhook. Downloads the binary and posts to the HockeyApp API. Automating deployment from Unity Cloud Build to Hockeyapp.",
   "main": "index.js",
   "dependencies": {
