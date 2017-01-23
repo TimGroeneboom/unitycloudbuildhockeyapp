@@ -2,10 +2,6 @@
 
 A NodeJS application to automate binary deployments from Unity Cloud Build to HockeyApp.
 
-![Slack Screenshot](screenshot.jpg?raw=true "Screenshot of Unity Cloud Build and HockeyApp activity within Slack when using this application.")
-
-Note; This is an initial release which is functional, but needs refactoring.
-
 ## App Flow
 
   1. Receive a webhook from Unity Cloud Build to notify a build is ready. 
@@ -20,6 +16,20 @@ Note; This is an initial release which is functional, but needs refactoring.
 
 ## Installation
 
+### Quick Installation ###
+  <a href="https://heroku.com/deploy">
+    <img src="https://www.herokucdn.com/deploy/button.svg" alt="Deploy">
+  </a>
+
+  1. Press the button above to create a new Heroku app.
+   
+  2. Supply the required API keys for both Unity Cloud Build and HockeyApp.
+ 	- UCB API key can be obtained [here](https://build.cloud.unity3d.com/preferences/).
+    - HockeyApp API key can be created [here](https://rink.hockeyapp.net/manage/auth_tokens). Be sure to create a key 'Upload' rights (e.g. anything above 'Read Only').
+  
+  3. Click `Deploy`.
+
+### Manual Installation ###
   1. Clone this repository.
 
   2. Add API keys to '.env' for both Unity Cloud Build and HockeyApp.
@@ -28,9 +38,10 @@ Note; This is an initial release which is functional, but needs refactoring.
 
   3. Deploy.  
     * Have only tested running on [Heroku](https://www.heroku.com/).
-  4. Setup the Unity Cloud Build webhook.
-    * Within UCB, view your app. Click 'Notifications', then 'Add New' and enter your app URL with '/build' appended. E.g. 'http://[appurl]/build/'
-    * Use a tool like [Request Bin](https://requestb.in/) to test web hooks from UCB, ontain the payload and test requests to '/build/'.
+
+After deployment, setup the Unity Cloud Build webhook.
+  * Within UCB, view your app. Click 'Notifications', then 'Add New' and enter your app URL with '/build' appended. E.g. 'http://[appurl]/build/'
+  * Use a tool like [Request Bin](https://requestb.in/) to test web hooks from UCB, ontain the payload and test requests to '/build/'.
 
 ## Notes
 
@@ -45,6 +56,8 @@ Note; This is an initial release which is functional, but needs refactoring.
   - Integrate job system to manage/prioritise jobs and view jobs in progress.
 
 ## Licenses
+
+Copyright 2017 Soupware
 
 Copyright 2016 Nathan Brodbent
 
