@@ -32,11 +32,12 @@ A NodeJS application to automate binary deployments from Unity Cloud Build to Ho
 ### Manual Installation ###
   1. Clone this repository.
 
-  2. Add API keys to '.env' for both Unity Cloud Build and HockeyApp.
+  2. On a terminal, navigate to the repository directory, and install dependencies with `npm install`.
+  3. Add API keys to '.env' for both Unity Cloud Build and HockeyApp.
     * UCB API key can be obtained [here](https://build.cloud.unity3d.com/preferences/).
     * HockeyApp API key can be created [here](https://rink.hockeyapp.net/manage/auth_tokens). Be sure to create a key 'Upload' rights (e.g. anything above 'Read Only').
 
-  3. Deploy.  
+  4. Deploy.  
     * Have only tested running on [Heroku](https://www.heroku.com/).
 
 After deployment, setup the Unity Cloud Build webhook.
