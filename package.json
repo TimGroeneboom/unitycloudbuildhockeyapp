@@ -1,5 +1,5 @@
 {
-  "name": "unity-cloud-build-to-hockeyapp",
+  "name": "ucb2hockeyapp",
   "version": "1.0.0",
   "description": "Receives a payload from Unity Cloud Build webhook. Downloads the binary and posts to the HockeyApp API. Automating deployment from Unity Cloud Build to Hockeyapp.",
   "main": "index.js",
@@ -15,5 +15,20 @@
     "start": "node index.js"
   },
   "author": "Nathan Broadbent",
-  "license": "ISC"
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Soupware/unitycloudbuildhockeyapp.git"
+  },
+  "keywords": [
+    "ucb",
+    "unity",
+    "cloud",
+    "build",
+    "hockeyapp"
+  ],
+  "bugs": {
+    "url": "https://github.com/Soupware/unitycloudbuildhockeyapp/issues"
+  },
+  "homepage": "https://github.com/Soupware/unitycloudbuildhockeyapp"
 }
