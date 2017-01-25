@@ -84,13 +84,10 @@ function getBuildDetails( buildAPIURL ){
             var data = JSON.parse(data);
             // console.log( data.links.download_primary.href );
 
-            var parsed = url.parse( data.links.download_primary.href );
-            var filename = path.basename( parsed.pathname );
-
             console.log("1. getBuildDetails: finished");
 
             // 3. Download binary.
-            downloadBinary( data.links.download_primary.href, filename );
+            downloadBinary( data );
 
         },
         error: function(error){
@@ -106,8 +103,12 @@ function getBuildDetails( buildAPIURL ){
     });
 }
 
-function downloadBinary( binaryURL, filename ){
+function downloadBinary( data ){
     
+    var parsed = url.parse( data.links.download_primary.href );
+    var filename = path.basename( parsed.pathname );
+    var binaryURL = data.links.download_primary.href;
+
     console.log("2. downloadBinary: start");
     console.log("   " + binaryURL);
     console.log("   " + filename);
@@ -142,7 +143,7 @@ function downloadBinary( binaryURL, filename ){
         writeStream.on('finish', () => {
 
             // console.log("2. downloadBinary: file finished");          
-            uploadToHockeyApp( filename );
+            uploadToHockeyApp( data, filename );
         });
 
     }).on('error', (e) => {
@@ -150,7 +151,8 @@ function downloadBinary( binaryURL, filename ){
     });
 }
 
-function uploadToHockeyApp( filename ){
+function uploadToHockeyApp( data, filename )
+{
     console.log("3. uploadToHockeyApp: start");
     // console.log("readfile: " + filename);
 
@@ -164,11 +166,15 @@ function uploadToHockeyApp( filename ){
     var HOCKEY_APP_PATH = '/api/2/apps/upload/';
     var HOCKEY_APP_PROTOCOL = 'https:';
 
+    var notes = "Automated release triggered from Unity Cloud Build.\n"
+        + "Commit ID: " + data.lastBuiltRevision + "\n"
+        + "Build Target Name: " + data.buildTargetName;
+
     // Create FormData
     var form = new FormData();
     form.append('status', 2);
     // form.append('mandatory', MANDATORY_TYPE[options.mandatory]);
-    form.append('notes', "Automated release triggered from Unity Cloud Build.");
+    form.append('notes', notes);
     form.append('notes_type', 0);
     form.append('notify', 0);
     form.append('ipa', readable);
