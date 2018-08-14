@@ -3,8 +3,8 @@ require('dotenv').config();
 
 // Options
 var options = {
-  port: process.env.PORT || 80, // Heroku port or 80.
-  unityAPIBase: "https://build-api.cloud.unity3d.com/", // URI (e.g. href) recieved in web hook payload.
+  port: process.env.PORT || 8080, // Heroku port or 80.
+  unityAPIBase: "https://build-api.cloud.unity3d.com", // URI (e.g. href) recieved in web hook payload.
   unityCloudAPIKey: process.env.UNITYCLOUD_KEY,
   hockeyappAPIUpload: "https://rink.hockeyapp.net/api/2/apps/upload",
   hockeyappAPIKey: process.env.HOCKEYAPP_KEY
@@ -49,6 +49,8 @@ app.post('/build', jsonParser, function (req, res) {
     mainRes = res;
 
     // 1. Get Build API URL
+    console.log(req.body);
+
     var buildAPIURL = req.body.links.api_self.href;
     if( !buildAPIURL ) {
         // URL not available.
@@ -73,8 +75,12 @@ app.post('/build', jsonParser, function (req, res) {
 function getBuildDetails( buildAPIURL ){
     console.log("1. getBuildDetails: start");
 
+    var url = options.unityAPIBase + buildAPIURL;
+    
+    console.log("URL : " + url);
+
     najax({ 
-        url: options.unityAPIBase + buildAPIURL,
+        url: url,
         type: 'GET', 
         headers: {
             'Authorization': 'Basic ' + options.unityCloudAPIKey
@@ -93,12 +99,14 @@ function getBuildDetails( buildAPIURL ){
         error: function(error){
             console.log(error);
 
-            mainRes.setHeader('Content-Type', 'application/json');
-            mainRes.send({
-                error: true,
-                message: "Problem getting build details from Unity Cloud Build.",
-                errorDump: error
-            });
+            // disabled the following lines since it causes a server crash... ( cannot set response headers )
+
+            //mainRes.setHeader('Content-Type', 'application/json');
+            //mainRes.send({
+            //    error: true,
+            //    message: "Problem getting build details from Unity Cloud Build.",
+            //    errorDump: error
+            //});
         }
     });
 }
