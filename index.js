@@ -7,7 +7,12 @@ var options = {
   unityAPIBase: "https://build-api.cloud.unity3d.com", // URI (e.g. href) recieved in web hook payload.
   unityCloudAPIKey: process.env.UNITYCLOUD_KEY,
   hockeyappAPIUpload: "https://rink.hockeyapp.net/api/2/apps/upload",
-  hockeyappAPIKey: process.env.HOCKEYAPP_KEY
+  hockeyappAPIKey: process.env.HOCKEYAPP_KEY,
+  repoURL : process.env.URL,
+  repoUser : process.env.USER,
+  repoPass : process.env.PASS,
+  repoBranch : process.env.BRANCH,
+  repoName : process.env.PROJECTNAME
 };
 
 // Imports
@@ -23,7 +28,8 @@ var path = require('path'),
     FormData = require('form-data'),
     _ = require('lodash'),
     url = require("url"),
-    path = require("path");
+    path = require("path"),
+    gitlog = require("./gitlog");
 
 // Run Server
 var server = server.listen( options.port, function(){
@@ -146,85 +152,103 @@ function downloadBinary( data ){
 
 function uploadToHockeyApp( data, filename )
 {
-    console.log("3. uploadToHockeyApp: start");
-    // console.log("readfile: " + filename);
+    console.log("3. get gitlog");
 
-    var readable = fs.createReadStream( filename );
-    readable.on('error', () => {
-      console.log('Error reading binary file for upload to HockeyApp');
-    });
-
-    // HockeyApp properties
-    var HOCKEY_APP_HOST = 'rink.hockeyapp.net';
-    var HOCKEY_APP_PATH = '/api/2/apps/upload/';
-    var HOCKEY_APP_PROTOCOL = 'https:';
-
-    var notes = "Automated release triggered from Unity Cloud Build.\n"
-        + "Commit ID: " + data.lastBuiltRevision + "\n"
-        + "Build Target Name: " + data.buildTargetName;
-
-    // Create FormData
-    var form = new FormData();
-    form.append('status', 2);
-    // form.append('mandatory', MANDATORY_TYPE[options.mandatory]);
-    form.append('notes', notes);
-    form.append('notes_type', 0);
-    form.append('notify', 0);
-    form.append('ipa', readable);
-
-    var req = form.submit({
-      host: HOCKEY_APP_HOST,
-      path: HOCKEY_APP_PATH,
-      protocol: HOCKEY_APP_PROTOCOL,
-      headers: {
-        'Accept': 'application/json',
-        'X-HockeyAppToken': options.hockeyappAPIKey
-      }
-    }, function (err, res) {
-        if (err) {
-            console.log(err);
-        }
-
-        if (res.statusCode !== 200 && res.statusCode !== 201) {
-            console.log('Uploading failed with status ' + res.statusCode);
-            console.log(res);
-            // res.on('data', function (chunk) {
-            //   console.log(chunk);
-            //             // res.on('end', function () {
-            //   console.log("end");
-            // });
-            return;
-        }
-
-        var jsonString = '';
-        res.on('data', (chunk) => {
+    gitlog.getLog( 
+        options.repoURL, 
+        options.repoUser, 
+        options.repoPass, 
+        options.repoBranch,
+        10,
+        data.lastBuiltRevision,
+        options.projectName,
+        function(log)
+        {
+            console.log("4. uploadToHockeyApp: start");
+            // console.log("readfile: " + filename);
         
-            jsonString += String.fromCharCode.apply(null, new Uint16Array( chunk ));
+            var readable = fs.createReadStream( filename );
+            readable.on('error', () => {
+                console.log('Error reading binary file for upload to HockeyApp');
+            });
+        
+            // HockeyApp properties
+            var HOCKEY_APP_HOST = 'rink.hockeyapp.net';
+            var HOCKEY_APP_PATH = '/api/2/apps/upload/';
+            var HOCKEY_APP_PROTOCOL = 'https:';
+        
+            var notes = "Automated release triggered from Unity Cloud Build.\n"
+                + "Commit ID: " + data.lastBuiltRevision + "\n"
+                + "Build Target Name: " + data.buildTargetName;
 
+            if( notes.length > 0 )
+            {
+                notes += "\n\n" + "<b>Recent Changes:</b>" + "\n";
+                for(var i = 0; i < log.length; i++)
+                {
+                    notes += "\n" + log[i].date + "\n" + log[i].message + "\n";
+                }
+            }
+
+            // Create FormData
+            var form = new FormData();
+            form.append('status', 2);
+            // form.append('mandatory', MANDATORY_TYPE[options.mandatory]);
+            form.append('notes', notes);
+            form.append('notes_type', 0);
+            form.append('notify', 0);
+            form.append('ipa', readable);
+        
+            var req = form.submit({
+            host: HOCKEY_APP_HOST,
+            path: HOCKEY_APP_PATH,
+            protocol: HOCKEY_APP_PROTOCOL,
+            headers: {
+                'Accept': 'application/json',
+                'X-HockeyAppToken': options.hockeyappAPIKey
+            }
+            }, function (err, res) {
+                if (err) {
+                    console.log(err);
+                }
+        
+                if (res.statusCode !== 200 && res.statusCode !== 201) {
+                    console.log('Uploading failed with status ' + res.statusCode);
+                    console.log(res);
+                    // res.on('data', function (chunk) {
+                    //   console.log(chunk);
+                    //             // res.on('end', function () {
+                    //   console.log("end");
+                    // });
+                    return;
+                }
+        
+                var jsonString = '';
+                res.on('data', (chunk) => {
+                
+                    jsonString += String.fromCharCode.apply(null, new Uint16Array( chunk ));
+        
+                });
+        
+                res.on('end', () => {
+        
+                    console.log("5. uploadToHockeyApp: finished");
+
+                    deleteFile( filename );
+                });
+            });
+            
+            // Track upload progress.
+            // console.log( req );
+            var len = parseInt( req.getHeader( 'content-length' ), 10);
+            var cur = 0;
+            var total = len / 1048576; //1048576 - bytes in  1Megabyte
+        
+            req.on('data', (chunk) => {
+                cur += chunk.length;
+                console.log("Downloading " + (100.0 * cur / len).toFixed(2) + "%, Downloaded: " + (cur / 1048576).toFixed(2) + " mb, Total: " + total.toFixed(2) + " mb");
+            });    
         });
-
-        res.on('end', () => {
-
-            console.log("3. uploadToHockeyApp: finished");
-
-            // console.log(jsonString);
-
-            deleteFile( filename );
-
-        });
-    });
-    
-    // Track upload progress.
-    // console.log( req );
-    var len = parseInt( req.getHeader( 'content-length' ), 10);
-    var cur = 0;
-    var total = len / 1048576; //1048576 - bytes in  1Megabyte
-
-    req.on('data', (chunk) => {
-        cur += chunk.length;
-        console.log("Downloading " + (100.0 * cur / len).toFixed(2) + "%, Downloaded: " + (cur / 1048576).toFixed(2) + " mb, Total: " + total.toFixed(2) + " mb");
-    });
-
 }
 
 // Delete file, used to clear up any binary downloaded.
