@@ -48,8 +48,19 @@ module.exports =
                         .exec(()=>
                         {
                             console.log("   Finished!");
-                            getLog();
+                            pull();
                         });
+                });
+        }
+
+	    function pull()
+        {
+            console.log("Pulling...");
+            git.pull()
+                .exec(()=>
+                {
+                    console.log("   Finished!");
+                    getLog();
                 });
         }
 
@@ -60,7 +71,7 @@ module.exports =
             {
                 var returnLog = [];
 
-                var index = -1;
+                var index = 0;
                 var found = false;
 
                 log.all.forEach(element => 
@@ -72,24 +83,22 @@ module.exports =
                     }
                 });
 
-                if( found )
-                {
-                    var i = index;
-                    var end = index+entries
-                    if( end > log.all.length)
-                        end = log.all.length;
-    
-                    for(i; i < end; i++)
-                    {
-                        var element = log.all[i];
-    
-                        returnLog.push({
-                            "hash" : element.hash,
-                            "date" : element.date,
-                            "message" : element.message
-                        });
+	            var i = index;
+	            var end = index+entries
+	            if( end > log.all.length)
+	                end = log.all.length;
+	
+	            for(i; i < end; i++)
+	            {
+	                var element = log.all[i];
+	
+	                returnLog.push({
+	                    "hash" : element.hash,
+	                    "date" : element.date,
+	                    "message" : element.message
+	                });
                     }
-                }
+                
 
                 console.log("   Finished!");
 
