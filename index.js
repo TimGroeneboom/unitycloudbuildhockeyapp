@@ -161,7 +161,7 @@ function uploadToHockeyApp( data, filename )
         options.repoBranch,
         10,
         data.lastBuiltRevision,
-        options.projectName,
+        options.repoName,
         function(log)
         {
             console.log("4. uploadToHockeyApp: start");
