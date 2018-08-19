@@ -8,11 +8,11 @@ var options = {
   unityCloudAPIKey: process.env.UNITYCLOUD_KEY,
   hockeyappAPIUpload: "https://rink.hockeyapp.net/api/2/apps/upload",
   hockeyappAPIKey: process.env.HOCKEYAPP_KEY,
-  repoURL : process.env.URL,
-  repoUser : process.env.USER,
-  repoPass : process.env.PASS,
-  repoBranch : process.env.BRANCH,
-  entries : process.env.ENTRIES
+  repoURL : process.env.GIT_URL,
+  repoUser : process.env.GIT_USER,
+  repoPass : process.env.GIT_PASS,
+  repoBranch : process.env.GIT_BRANCH,
+  entries : process.env.GIT_ENTRIES
 };
 
 // Imports
