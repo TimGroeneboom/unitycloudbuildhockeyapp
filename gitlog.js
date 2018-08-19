@@ -1,16 +1,19 @@
 
 module.exports = 
 {
-   getLog : function(url, user, pass, branch, entries, commitID, projectName, callback)
+   getLog : function(url, user, pass, branch, entries, commitID, callback)
    {
-        var os = require('os');
-        var repoPath = os.tmpdir()+"/gitlog/"+projectName;
+        var repoPath = 'tmp';
         
-        var fs = require('fs');
-        
+        var fs = require('fs-extra');
+        var shell = require('shelljs');
+
         if (!fs.existsSync(repoPath))
         {
-            var shell = require('shelljs');
+            shell.mkdir('-p', repoPath);
+        }else
+        {
+            fs.removeSync(repoPath);
             shell.mkdir('-p', repoPath);
         }
 
@@ -18,23 +21,13 @@ module.exports =
 
         const remote = `https://${user}:${pass}@${url}`;
 
-        git.checkIsRepo(function(err, isRepo)
-        {
-            if( !isRepo )
+        console.log("Cloning to " + repoPath);
+        git.clone(remote, "../" + repoPath)
+            .exec(() =>
             {
-                console.log("No repo found, cloning...");
-                git.clone(remote, "../" + projectName)
-                    .exec(() =>
-                    {
-                        console.log("   Finished!");
-                        fetch();
-                    } );
-            }else
-            {
-                console.log("Repo found!");
+                console.log("   Finished!");
                 fetch();
-            }
-        });
+            } );
 
         function fetch()
         {
@@ -97,11 +90,12 @@ module.exports =
 	                    "date" : element.date,
 	                    "message" : element.message
 	                });
-                    }
-                
+                }
 
                 console.log("   Finished!");
 
+                fs.removeSync(repoPath);
+                
                 callback(returnLog);
             });
         }

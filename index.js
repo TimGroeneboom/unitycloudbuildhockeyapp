@@ -12,7 +12,7 @@ var options = {
   repoUser : process.env.USER,
   repoPass : process.env.PASS,
   repoBranch : process.env.BRANCH,
-  repoName : process.env.PROJECTNAME
+  entries : process.env.ENTRIES
 };
 
 // Imports
@@ -159,9 +159,8 @@ function uploadToHockeyApp( data, filename )
         options.repoUser, 
         options.repoPass, 
         options.repoBranch,
-        10,
+        options.entries,
         data.lastBuiltRevision,
-        options.repoName,
         function(log)
         {
             console.log("4. uploadToHockeyApp: start");
