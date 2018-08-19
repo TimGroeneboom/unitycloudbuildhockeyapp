@@ -7,7 +7,8 @@ A NodeJS application to automate binary deployments from Unity Cloud Build to Ho
   1. Receive a webhook from Unity Cloud Build to notify a build is ready. 
   2. Get the build details from the JSON payload within the webhook.
   3. Download the app binary from the Unity Cloud Build API.
-  4. Upload the app binary to HockeyApp.
+  4. Clone repository to get changelog
+  5. Upload the app binary to HockeyApp.
 
 ## Requirements
 
@@ -52,7 +53,6 @@ After deployment, setup the Unity Cloud Build webhook.
 
 ## Todo
   - Clean up and comment codebase.
-  - Populate HockeyApp release notes with Git commit message.
   - Add logging feature to show builds processed and deployed.
   - Integrate job system to manage/prioritise jobs and view jobs in progress.
 
