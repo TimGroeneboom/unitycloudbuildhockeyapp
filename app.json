@@ -6,6 +6,12 @@
   "keywords": ["unity", "cloud", "build", "hockeyapp"],
   "env": {
         "UNITYCLOUD_KEY": "abc123",
-        "HOCKEYAPP_KEY": "abc123"
+        "HOCKEYAPP_KEY": "abc123",
+        "PORT": "8080",
+        "BRANCH" : "master",
+        "URL" : "github.com/user/repo",
+        "USERNAME" : "username",
+        "PASS" : "password",
+        "PROJECTNAME" : "projectname"
   }
 }
