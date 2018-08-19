@@ -17,50 +17,51 @@ module.exports =
             shell.mkdir('-p', repoPath);
         }
 
-        var git = require('simple-git')(repoPath);
+        var git = require('simple-git/promise')(repoPath);
 
         const remote = `https://${user}:${pass}@${url}`;
 
         console.log("Cloning to " + repoPath);
         git.clone(remote, "../" + repoPath)
-            .exec(() =>
+            .then(() =>
             {
                 console.log("   Finished!");
                 fetch();
-            } );
+            } ).catch( err => console.log(err) );
+
 
         function fetch()
         {
             console.log("Fetching...");
             git.fetch()
-                .exec(()=>
+                .then(()=>
                 {
                     console.log("   Finished!");
                     console.log("Switching to branch " + branch);
                     git.checkout(branch)
-                        .exec(()=>
+                        .then(()=>
                         {
                             console.log("   Finished!");
                             pull();
                         });
-                });
+                }).catch( err => console.log(err) );
         }
 
 	    function pull()
         {
             console.log("Pulling...");
             git.pull()
-                .exec(()=>
+                .then(()=>
                 {
                     console.log("   Finished!");
                     getLog();
-                });
+                }).catch( err => console.log(err) );
         }
 
         function getLog()
         {
             console.log("Getting log...")
-            git.log([], function(err, log)
+            git.log().then( log =>
             {
                 var returnLog = [];
 
@@ -76,28 +77,26 @@ module.exports =
                     }
                 });
 
-	            var i = index;
-	            var end = index+entries
-	            if( end > log.all.length)
-	                end = log.all.length;
-	
-	            for(i; i < end; i++)
-	            {
-	                var element = log.all[i];
-	
-	                returnLog.push({
-	                    "hash" : element.hash,
-	                    "date" : element.date,
-	                    "message" : element.message
-	                });
+                var i = index;
+                var end = index+entries
+                if( end > log.all.length)
+                    end = log.all.length;
+    
+                for(i; i < end; i++)
+                {
+                    var element = log.all[i];
+    
+                    returnLog.push({
+                        "hash" : element.hash,
+                        "date" : element.date,
+                        "message" : element.message
+                    });
                 }
 
                 console.log("   Finished!");
 
-                fs.removeSync(repoPath);
-                
                 callback(returnLog);
-            });
+            }).catch(err => console.log(err));
         }
    }
 };
