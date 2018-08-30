@@ -2,29 +2,37 @@
 module.exports = 
 {
 	getLog : function(url, user, pass, branch, entries, commitID, callback){
-		var repoPath = "tmp";
+		var repoPath = "unitycloudhockeyapp";
         
 		var fs = require("fs-extra");
 		var shell = require("shelljs");
+		var os = require("os");
+		var dir = os.tmpdir() + "/" + repoPath;
 
-		if (!fs.existsSync(repoPath)){
-			shell.mkdir("-p", repoPath);
-		}else{
-			fs.removeSync(repoPath);
-			shell.mkdir("-p", repoPath);
+		console.log(dir);
+
+		if (!fs.existsSync(dir)){
+			shell.mkdir("-p", dir);
 		}
 
-		var git = require("simple-git/promise")(repoPath);
+		var git = require("simple-git/promise")(dir);
 
 		const remote = `https://${user}:${pass}@${url}`;
 
-		console.log("Cloning to " + repoPath);
-		git.clone(remote, "../" + repoPath)
-			.then(() =>{
-				console.log("   Finished!");
-				fetch();
-			} ).catch( err => console.log(err) );
-
+		git.checkIsRepo()
+			.then( isRepo =>{
+				if( !isRepo ){
+					console.log("Cloning to " + repoPath);
+					git.clone(remote, "../" + repoPath)
+						.then(() =>{
+							console.log("   Finished!");
+							fetch();
+						} ).catch( err => console.log(err) );
+			
+				}else{
+					fetch();
+				}
+			});
 
 		function fetch(){
 			console.log("Fetching...");
