@@ -160,7 +160,7 @@ function uploadToHockeyApp( data, filename )
 		{
 			console.log("4. uploadToHockeyApp: start");
 			// console.log("readfile: " + filename);
-        
+		
 			var readable = fs.createReadStream( filename );
 			readable.on("error", () => {
 				console.log("Error reading binary file for upload to HockeyApp");
@@ -175,7 +175,7 @@ function uploadToHockeyApp( data, filename )
                 + "Commit ID: " + data.lastBuiltRevision + "\n"
                 + "Build Target Name: " + data.buildTargetName;
 
-			if( notes.length > 0 )
+			if( log.length > 0 )
 			{
 				notes += "\n\n" + "<b>Recent Changes:</b>" + "\n";
 				for(var i = 0; i < log.length; i++)
@@ -228,7 +228,7 @@ function uploadToHockeyApp( data, filename )
 			req.on("data", (chunk) => {
 				cur += chunk.length;
 				console.log("Downloading " + (100.0 * cur / len).toFixed(2) + "%, Downloaded: " + (cur / 1048576).toFixed(2) + " mb, Total: " + total.toFixed(2) + " mb");
-			});    
+			});   
 		});
 }
 
