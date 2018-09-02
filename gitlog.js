@@ -79,7 +79,8 @@ module.exports =
 			
 							returnLog.push({
 								"hash" : element.hash,
-								"date" : element.date,
+                                "date" : element.date,
+                                "author" : element.author_name,
 								"message" : element.message
 							});
 						}

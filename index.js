@@ -156,8 +156,7 @@ function uploadToHockeyApp( data, filename )
 		options.repoBranch,
 		options.entries,
 		data.lastBuiltRevision,
-		function(log)
-		{
+		function(log){
 			console.log("4. uploadToHockeyApp: start");
 			// console.log("readfile: " + filename);
 		
@@ -175,12 +174,10 @@ function uploadToHockeyApp( data, filename )
                 + "Commit ID: " + data.lastBuiltRevision + "\n"
                 + "Build Target Name: " + data.buildTargetName;
 
-			if( log.length > 0 )
-			{
+			if( log.length > 0 ){
 				notes += "\n\n" + "<b>Recent Changes:</b>" + "\n";
-				for(var i = 0; i < log.length; i++)
-				{
-					notes += "\n" + log[i].date + "\n" + log[i].message + "\n";
+				for(var i = 0; i < log.length; i++){
+					notes += "\n" + log[i].author + " : " + log[i].date + "\n" + log[i].message + "\n";
 				}
 			}
 
