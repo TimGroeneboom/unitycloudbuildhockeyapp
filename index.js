@@ -12,7 +12,8 @@ var options = {
 	repoUser : process.env.GIT_USER,
 	repoPass : process.env.GIT_PASS,
 	repoBranch : process.env.GIT_BRANCH,
-	entries : process.env.GIT_ENTRIES
+	entries : process.env.GIT_ENTRIES,
+	notify : process.env.HOCKEYAPP_SEND_NOTIFICATION
 };
 
 // Imports
@@ -187,7 +188,7 @@ function uploadToHockeyApp( data, filename )
 			// form.append('mandatory', MANDATORY_TYPE[options.mandatory]);
 			form.append("notes", notes);
 			form.append("notes_type", 0);
-			form.append("notify", 0);
+			form.append("notify", options.notify == "true" ? "1" : "0");
 			form.append("ipa", readable);
         
 			var req = form.submit({
