@@ -190,6 +190,9 @@ function uploadToHockeyApp( data, filename )
 			form.append("notes_type", 0);
 			form.append("notify", options.notify == "true" ? "1" : "0");
 			form.append("ipa", readable);
+
+			if( options.teams != "0")
+				form.append("teams", options.teams );
         
 			var req = form.submit({
 				host: HOCKEY_APP_HOST,
