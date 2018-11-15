@@ -12,6 +12,7 @@
         "GIT_URL" : "github.com/user/repo",
         "GIT_USER" : "username",
         "GIT_PASS" : "password",
-        "GIT_ENTRIES" : "10"
+        "GIT_ENTRIES" : "10",
+        "TEAMS" : "0"
   }
 }

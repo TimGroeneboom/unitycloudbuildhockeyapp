@@ -13,7 +13,8 @@ var options = {
 	repoPass : process.env.GIT_PASS,
 	repoBranch : process.env.GIT_BRANCH,
 	entries : process.env.GIT_ENTRIES,
-	notify : process.env.HOCKEYAPP_SEND_NOTIFICATION
+	notify : process.env.HOCKEYAPP_SEND_NOTIFICATION,
+	teams : process.env.TEAMS
 };
 
 // Imports
